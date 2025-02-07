@@ -5,6 +5,7 @@ from airflow.decorators import task
 from airflow.utils.dates import days_ago
 import pandas as pd
 from dotenv import load_dotenv
+from airflow.models import Variable
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -52,8 +53,8 @@ with DAG(
     @task
     def export_data(df):
         """Export stored data to a CSV file."""
-        # export_to_csv(df, "/opt/airflow/dags/nasa_neo_data.csv")
-        export_to_csv(df, os.getenv("EXPORT_FILE_PATH"))
+        file_path = Variable.get("EXPORT_FILE_PATH")
+        export_to_csv(df, file_path)
 
     # Task dependencies
     raw_data = fetch_data()
